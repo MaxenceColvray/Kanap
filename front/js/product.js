@@ -14,6 +14,7 @@ fetch("http://localhost:3000/api/products/"+varUrl)
   }
 })
 .then(function(product) {
+  console.log(product._id)
   //Afichage du produit//
 
   //image
@@ -36,7 +37,7 @@ fetch("http://localhost:3000/api/products/"+varUrl)
   description.textContent = product.description;
 
   //Option de couleurs
-  product.colors.forEach(color => {
+    product.colors.forEach(color => {
     let select = document.getElementsByTagName('select')[0]
     let option = document.createElement('option')
     option.value= color
@@ -52,6 +53,7 @@ fetch("http://localhost:3000/api/products/"+varUrl)
 
     //récupère la  valeur de l'input quantité 
     quantity = document.querySelector('.item__content__settings__quantity input').value
+    quantity = parseInt(quantity)
     console.log(quantity)
 
     //Création du produit pour le panier
@@ -63,17 +65,9 @@ fetch("http://localhost:3000/api/products/"+varUrl)
 
     }
 
-    //Envoie le produit dans le tableau panier puis push dans localstorage au format JSON
+    console.log(produit)
 
 
-    //si produit est deja dans le tableau alors message alert sinon push 
-
-    //let cart =[localStorage.getItem('cart')]
-    //console.log(cart)
-
-    //let cart = localStorage.setItem('cart', cart)
-
-    //j'incremente mon tableau
     let cart = JSON.parse(localStorage.getItem('cart'))
 
     if (localStorage.getItem('cart') == null ) {
@@ -83,61 +77,41 @@ fetch("http://localhost:3000/api/products/"+varUrl)
       cart = JSON.stringify(cart)
       localStorage.setItem('cart', cart)
 
-      console.log(cart)
 
     } else {
-
-      //si produit deja existant alors nothing sinon 
-      
-
-      cart.push(produit)
-      cart = JSON.stringify(cart)
-      localStorage.setItem('cart', cart)
-
       console.log(cart)
 
-    }
+      if (cart.some(item => item.id === product._id))/*??????*/ {
+
+        currentIndex = cart.findIndex( (produit) => produit.id === product._id)
+        console.log(currentIndex)
+
+        currentObject = (cart[cart.findIndex( (produit) => produit.id === product._id)])
+        console.log(currentObject)
+
+        
+
+        currentQt = currentObject.qt
+        currentQt = parseInt(currentQt)
+
+        
 
 
-   /* console.log(cart)
+        currentObject.qt = currentQt + quantity
+        console.log(currentObject)
 
-    cart.push(produit)
-    console.log(cart)
-
-    //je transforme mont tableau en json et je l'ajoute dans localstorage
-    cart = JSON.stringify(cart)
-
-    localStorage.setItem('cart', cart)
-    console.log(cart)*/
   
+        console.log(cart)
+        cart = JSON.stringify(cart)
+        localStorage.setItem('cart', cart)
 
+        }else {
 
-
-
-
-   /* if (localStorage.getItem('cart') == null ) {
-      console.log('oui')
-      let cart = []
-      cart.push(produit)
-      console.log(cart)
-      cart = JSON.stringify(cart)
-      localStorage.setItem('cart', cart)
-      console.log(cart)
-    } else {
-
-    };*/
-
-
-
-    //let panier = localStorage.getItem('panier') ? JSON.parse(localStorage.getItem('panier')) : []
-
-
-
-
-
-    
-   /*cart = JSON.stringify(cart)
-   localStorage.setItem('cart', cart)*/
+          cart.push(produit)
+          cart = JSON.stringify(cart)
+          localStorage.setItem('cart', cart)
+        }
+    }
 
     });
 })
@@ -147,41 +121,8 @@ fetch("http://localhost:3000/api/products/"+varUrl)
 
 
 
-//voir avec thomas
 
+//Récupere la panier //Si n'est pas vide, ajoutre le new produit //Si vide, créer un tableeau pui ajouter le produit
+//let panier = localStorage.getItem('panier') ? JSON.parse(localStorage.getItem('panier')) : []
 
-        /*
-        
-
-        console.log(produit)
-
-        //Récupere la panier //Si n'est pas vide, ajoutre le new produit //Si vide, créer un tableeau pui ajouter le produit
-        let panier = localStorage.getItem('panier') ? JSON.parse(localStorage.getItem('panier')) : []
-
-        console.log(panier)
-
-       
-            
-                //Si le produit existe modifier la quantité
-                // sinon ajouter le produit
-                panier.push(produit)
-            
-
-        
-
-        //Enregistre le panier
-        panier = JSON.stringify(panier)
-        localStorage.setItem('panier',panier)
-        
-        
-        // localStorage.setItem('id',varUrl)
-
-        // localStorage.setItem('color',optionSelect)// Voir avec thomas ????
-        // localStorage.setItem('img',product.imageUrl)
-        // localStorage.setItem('alt_img',product.altTxt)
-        // localStorage.setItem('title',product.name)
-        // localStorage.setItem('price',product.price)
-        
-        // let quantity = document.getElementById('quantity').value
-        // localStorage.setItem('qt',quantity)*/
 
