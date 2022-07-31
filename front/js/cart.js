@@ -1,3 +1,90 @@
+let priceTable = []
+fetch("http://localhost:3000/api/products")
+.then(function(res) {
+    if (res.ok) {
+      return res.json();
+    }
+})
+.then(function(products) {
+    console.log(products)
+
+    products.forEach(product => {
+
+        let objectPrice = {
+            id : product._id,
+            Price : product.price,
+        }
+
+        priceTable.push(objectPrice)
+
+    });
+
+    console.log(priceTable)
+
+
+})
+.catch(function(err) {
+  console.log('erreur')
+});
+
+
+
+let cart = JSON.parse(localStorage.getItem('cart'))
+
+console.log(cart)
+
+cart.forEach(product => {
+
+console.log(product)
+
+//Défini la box des articles
+cart__items = document.getElementById('cart__items')
+
+//Article
+let cartArticle = document.createElement('article')
+//data-id
+//data-color
+cart__items.appendChild(cartArticle)
+
+//Img
+let divImg = document.createElement('div')
+divImg.setAttribute('class', "cart__item__img")
+cartArticle.appendChild(divImg)
+
+let Img = document.createElement('img')
+Img.src = product.img
+Img.alt = product.altImg
+divImg.appendChild(Img)
+
+//div content
+let divContent = document.createElement('div')
+divContent.setAttribute('class', "cart__item__content")
+cartArticle.appendChild(divContent)
+
+//div content description
+let divDescription = document.createElement('div')
+divDescription.setAttribute('class', "cart__item__content__description")
+cartArticle.appendChild(divDescription)
+
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
 //Réucpere les panier en locaStorage
 
 // 2 Option 

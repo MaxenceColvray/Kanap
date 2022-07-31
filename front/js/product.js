@@ -60,6 +60,8 @@ fetch("http://localhost:3000/api/products/"+varUrl)
     let produit = {
 
       id : product._id,
+      img : product.imageUrl,
+      altImg : product.altTxt,
       description : product.description,
       qt : quantity
 
@@ -79,8 +81,6 @@ fetch("http://localhost:3000/api/products/"+varUrl)
 
 
     } else {
-      console.log(cart)
-
       if (cart.some(item => item.id === product._id))/*??????*/ {
 
         currentIndex = cart.findIndex( (produit) => produit.id === product._id)
@@ -89,30 +89,22 @@ fetch("http://localhost:3000/api/products/"+varUrl)
         currentObject = (cart[cart.findIndex( (produit) => produit.id === product._id)])
         console.log(currentObject)
 
-        
-
         currentQt = currentObject.qt
         currentQt = parseInt(currentQt)
 
-        
-
-
         currentObject.qt = currentQt + quantity
         console.log(currentObject)
-
-  
+ 
         console.log(cart)
         cart = JSON.stringify(cart)
         localStorage.setItem('cart', cart)
 
-        }else {
-
+        } else {
           cart.push(produit)
           cart = JSON.stringify(cart)
           localStorage.setItem('cart', cart)
         }
     }
-
     });
 })
 .catch(function(err) {
