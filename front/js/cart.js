@@ -1,4 +1,5 @@
 let priceTable = []
+
 fetch("http://localhost:3000/api/products")
 .then(function(res) {
     if (res.ok) {
@@ -12,14 +13,146 @@ fetch("http://localhost:3000/api/products")
 
         let objectPrice = {
             id : product._id,
-            Price : product.price,
+            price : product.price
         }
 
         priceTable.push(objectPrice)
 
     });
 
-    console.log(priceTable)
+    let cart = JSON.parse(localStorage.getItem('cart'))
+    console.log(cart)
+
+    
+    totalPrice = 0
+    
+
+    let i = 0
+    totalArticles = 0
+
+
+    cart.forEach(product => {
+    console.log(product)
+
+
+    //Défini la box des articles
+    cart__items = document.getElementById('cart__items')
+
+    //Article
+    let cartArticle = document.createElement('article')
+    cartArticle.setAttribute('class', "cart__item")
+    cartArticle.setAttribute('data-ID', product.id)
+    cartArticle.setAttribute('data-color', product.color)
+    cart__items.appendChild(cartArticle)
+
+    //Img
+    let divImg = document.createElement('div')
+    divImg.setAttribute('class', "cart__item__img")
+    cartArticle.appendChild(divImg)
+
+    let Img = document.createElement('img')
+    Img.src = product.img
+    Img.alt = product.altImg
+    divImg.appendChild(Img)
+
+    //div content
+    let divContent = document.createElement('div')
+    divContent.setAttribute('class', "cart__item__content")
+    cartArticle.appendChild(divContent)
+
+    //div content description
+    let divDescription = document.createElement('div')
+    divDescription.setAttribute('class', "cart__item__content__description")
+    divContent.appendChild(divDescription)
+
+    //Name
+    let name = document.createElement('h2')
+    name.textContent = product.name
+    divDescription.appendChild(name)
+
+    //Couleur
+    let color = document.createElement('p')
+    color.textContent = product.color
+    divDescription.appendChild(color)
+
+    //Price
+    let price = document.createElement('p')
+    //Trouver le prix dans le tableau de prix corresspondant à mon id
+    let priceIndex = priceTable.findIndex( (prix) => prix.id === product.id)
+    price.textContent = priceTable[priceIndex].price + " €"
+    totalPrice = totalPrice + priceTable[priceIndex].price
+
+    divDescription.appendChild(price)
+
+    //div settings
+    let divsettings = document.createElement('div')
+    divsettings.setAttribute('class', "cart__item__content__settings")
+    divContent.appendChild(divsettings)
+
+    //div quantity
+    let divquantity = document.createElement('div')
+    divquantity.setAttribute('class', "cart__item__content__settings__quantity")
+    divsettings.appendChild(divquantity)
+
+    //Quantité
+    let quantity = document.createElement('p')
+    quantity.textContent = "Qté : " + product.qt
+    divquantity.appendChild(quantity)
+    
+    //Input quantité
+    let quantityInput = document.createElement('input')
+    quantityInput.setAttribute('class', "itemQuantity")
+    quantityInput.type = "number"
+    quantityInput.name = "itemQuantity"
+    quantityInput.min = "1"
+    quantityInput.max = "100"
+    quantityInput.value = 1
+    divquantity.appendChild(quantityInput)
+  
+
+
+    //div delete
+    let divdelete = document.createElement('div')
+    divdelete.setAttribute('class', "cart__item__content__settings__delete")
+    divsettings.appendChild(divdelete)
+
+    //Supprimer
+    let deleteItem = document.createElement('p')
+    deleteItem.setAttribute('class', "deleteItem")
+    deleteItem.textContent = "Supprimer"
+    divdelete.appendChild(deleteItem)
+
+    totalArticles = totalArticles + (product.qt * quantityInput.value)
+
+
+
+
+
+
+        let itemQuantity= document.getElementsByName('itemQuantity')[i]
+        i = i+1
+
+        itemQuantity.addEventListener('change', function () {
+            newtotalArticles = 0
+            s = 0
+            cart.forEach(product => {
+                let itemQuantity= document.getElementsByName('itemQuantity')[s]
+                newtotalArticles = newtotalArticles + (product.qt * itemQuantity.value)
+                s = s+1 
+            })
+            document.getElementById('totalQuantity').textContent = newtotalArticles
+        })
+
+    })
+
+
+   
+
+    //Total quantity
+    document.getElementById('totalQuantity').textContent = totalArticles
+
+    //Total price
+    document.getElementById('totalPrice').textContent = totalPrice
 
 
 })
@@ -29,51 +162,7 @@ fetch("http://localhost:3000/api/products")
 
 
 
-let cart = JSON.parse(localStorage.getItem('cart'))
 
-console.log(cart)
-
-cart.forEach(product => {
-
-console.log(product)
-
-//Défini la box des articles
-cart__items = document.getElementById('cart__items')
-
-//Article
-let cartArticle = document.createElement('article')
-//data-id
-//data-color
-cart__items.appendChild(cartArticle)
-
-//Img
-let divImg = document.createElement('div')
-divImg.setAttribute('class', "cart__item__img")
-cartArticle.appendChild(divImg)
-
-let Img = document.createElement('img')
-Img.src = product.img
-Img.alt = product.altImg
-divImg.appendChild(Img)
-
-//div content
-let divContent = document.createElement('div')
-divContent.setAttribute('class', "cart__item__content")
-cartArticle.appendChild(divContent)
-
-//div content description
-let divDescription = document.createElement('div')
-divDescription.setAttribute('class', "cart__item__content__description")
-cartArticle.appendChild(divDescription)
-
-
-
-
-
-
-
-
-});
 
 
 
@@ -93,31 +182,5 @@ cartArticle.appendChild(divDescription)
 
 
 
-//Ajout d'un article dans le panier
-
-
-// let cart__item = document.getElementById('cart__items');
-
-// let newArticle = document.createElement('article')
-// newArticle.id=localStorage.getItem('id')
-// //newArticle.=localStorage.getItem('color')
-// cart__item.appendChild(newArticle)
-
-// console.log(newArticle)
-// newArticle.innerHTML = '<div class="cart__item__img"><img src='+localStorage.getItem('img')+' alt='+localStorage.getItem('alt_img')+'></div><div class="cart__item__content"><div class="cart__item__content__description"><h2>'+localStorage.getItem('title')+'</h2><p>XXX</p><p>'+localStorage.getItem('price')+'€</p></div><div class="cart__item__content__settings"><div class="cart__item__content__settings__quantity"><p>Qté : '+localStorage.getItem('qt')+'</p><input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="1"></div><div class="cart__item__content__settings__delete"><p class="deleteItem">Supprimer</p></div></div></div>';
-
-
-// img.innerHTML = `<img src=${product.imageUrl} alt=${product.altTxt}>`;
-
-
-// //total articles
-// let itemQuantity = document.getElementsByClassName('itemQuantity')[0].value
-// console.log(itemQuantity)
-// let totalQt = document.getElementById('totalQuantity')
-// totalQt.textContent = localStorage.getItem('qt')*itemQuantity
-
-// //total prix
-// let totalPrice = document.getElementById('totalPrice')
-// totalPrice.textContent = localStorage.getItem('price')*totalQt.textContent
 
 

@@ -35,14 +35,15 @@ fetch("http://localhost:3000/api/products/"+varUrl)
   //Description
   let description = document.getElementById('description');
   description.textContent = product.description;
-
+  
   //Option de couleurs
+  let select = document.getElementsByTagName('select')[0]
     product.colors.forEach(color => {
-    let select = document.getElementsByTagName('select')[0]
-    let option = document.createElement('option')
-    option.value= color
-    option.textContent = color
-    select.appendChild(option)
+
+      let option = document.createElement('option')
+      option.value= color
+      option.textContent = color
+      select.appendChild(option)
   });
 
   
@@ -51,18 +52,31 @@ fetch("http://localhost:3000/api/products/"+varUrl)
   const submitCart = document.getElementById('addToCart')
   submitCart.addEventListener('click' , function(){
 
+
     //récupère la  valeur de l'input quantité 
     quantity = document.querySelector('.item__content__settings__quantity input').value
     quantity = parseInt(quantity)
     console.log(quantity)
 
+    //récupère la  valeur de l'option couleur
+    console.log(select.value)
+    if (select.value === "") {
+
+      alert('Vous devez choisir une couleur')
+
+    }
+
+    else {
+
     //Création du produit pour le panier
     let produit = {
 
-      id : product._id,
-      img : product.imageUrl,
+      id: product._id,
+      img: product.imageUrl,
       altImg : product.altTxt,
+      name : product.altTxt,
       description : product.description,
+      color : select.value,
       qt : quantity
 
     }
@@ -81,7 +95,8 @@ fetch("http://localhost:3000/api/products/"+varUrl)
 
 
     } else {
-      if (cart.some(item => item.id === product._id))/*??????*/ {
+      // Si cart contient un objet dont l'id est égale à mon product id (id du produit actuellment sur la page) et une couleur differente
+      if (cart.some(item => item.id === product._id & item.color === select.value))/*   ??????*/ {
 
         currentIndex = cart.findIndex( (produit) => produit.id === product._id)
         console.log(currentIndex)
@@ -105,7 +120,9 @@ fetch("http://localhost:3000/api/products/"+varUrl)
           localStorage.setItem('cart', cart)
         }
     }
-    });
+  }
+  });
+  
 })
 .catch(function(err) {
   console.log('erreur')
