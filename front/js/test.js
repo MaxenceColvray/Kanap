@@ -27,17 +27,6 @@ fetch("http://localhost:3000/api/products")
 console.log(priceTable)
 console.log(priceTable[0])
 
-/*function afficherdestrucs (){
-    return 'r'
-}*/
-
-afficherdestrucs = () =>{
-    return 'r'
-}
-
-
-afficherdestrucs()
-
 
 
     
