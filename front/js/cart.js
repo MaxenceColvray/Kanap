@@ -1,5 +1,8 @@
-let priceTable = []
+/*-----------Sart 4.Création d'un tableau de prix----------*/
+//Le tableau de prix "priceTable" doit contenir le prix de tous les produits du site  
+//on enregistre pas le prix dans l'objet "produit" sur le local-storage pour des raisons de sécurité
 
+let priceTable = []
 fetch("http://localhost:3000/api/products")
     .then(function (res) {
         if (res.ok) {
@@ -20,18 +23,19 @@ fetch("http://localhost:3000/api/products")
 
         });
         console.log(priceTable)
+        /*-----------End 4.Création d'un tableau de prix----------*/
 
+        /*-----------Start 5.Affichage du panier----------*/
+        //Récupère le panier en langage JavaScript
         let cart = JSON.parse(localStorage.getItem('cart'))
         console.log(cart)
 
-
         totalPrice = 0
         let i = 0
-        totalArticles = 0
+        let totalArticles = 0
 
         cart.forEach(product => {
             console.log(product)
-
 
             //Défini la box des articles
             cart__items = document.getElementById('cart__items')
@@ -77,12 +81,9 @@ fetch("http://localhost:3000/api/products")
             let price = document.createElement('p')
             //Trouver le prix dans le tableau de prix corresspondant à mon id
             let priceIndex = priceTable.findIndex((element) => element.id === product.id)
-            let tableidPrice = priceTable[priceIndex].price
-            price.textContent = (tableidPrice * product.qt) + " €"
-            totalPrice = totalPrice + (tableidPrice * product.qt)
+            price.textContent = priceTable[priceIndex].price + " €"
+            //totalPrice = totalPrice + (tableidPrice * product.qt)
             divDescription.appendChild(price)
-
-            console.log(priceIndex)
 
             //div settings
             let divsettings = document.createElement('div')
@@ -96,7 +97,7 @@ fetch("http://localhost:3000/api/products")
 
             //Quantité
             let quantity = document.createElement('p')
-            quantity.textContent = "Qté : " + product.qt
+            quantity.textContent = "Qté : "
             divquantity.appendChild(quantity)
 
             //Input quantité
@@ -106,7 +107,7 @@ fetch("http://localhost:3000/api/products")
             quantityInput.name = "itemQuantity"
             quantityInput.min = "1"
             quantityInput.max = "100"
-            quantityInput.value = 1
+            quantityInput.value = product.qt
             divquantity.appendChild(quantityInput)
 
 
@@ -121,8 +122,23 @@ fetch("http://localhost:3000/api/products")
             deleteItem.setAttribute('class', "deleteItem")
             deleteItem.textContent = "Supprimer"
             divdelete.appendChild(deleteItem)
+            /*-----------End 5.Affichage du panier----------*/
 
-            totalArticles = totalArticles + (product.qt * quantityInput.value)
+            let calculer = () => {      
+                //Articles total
+                totalArticles = totalArticles + product.qt
+                document.getElementById('totalQuantity').textContent = totalArticles
+
+                //Articles prix
+
+
+                console.log(priceTable[priceIndex].price)
+                console.log(product.qt)
+                console.log(totalArticles)
+    
+            }
+            calculer()
+            
 
             let itemQuantity = document.getElementsByName('itemQuantity')[i]
             let deleteButton = (document.getElementsByClassName('deleteItem'))[i]
@@ -164,11 +180,13 @@ fetch("http://localhost:3000/api/products")
         })
 
 
+
+        
+
+
         //Total quantity
-        document.getElementById('totalQuantity').textContent = totalArticles
 
         //Total price
-        document.getElementById('totalPrice').textContent = totalPrice
 
     })
 
@@ -176,8 +194,9 @@ fetch("http://localhost:3000/api/products")
         console.log('erreur')
     });
 
-/*----------Start contrôle de formulaire----------*/
 
+
+/*----------Start 6.Contrôle de formulaire----------*/
 //First Name
 let input_firstName = document.getElementById('firstName')
 let err_msg_FirtstName = document.getElementById('firstNameErrorMsg')
@@ -213,20 +232,28 @@ input_lastName.addEventListener("input", function (element) {
 })
 
 //address
-let input_Address = document.getElementById('address')
-let err_msg_Address = document.getElementById('addressErrorMsg')
-let regex_Address = new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç0-9]") //que des lettres, espaces, tirets et chiffres
 
-input_Address.addEventListener("input", function (element) {
-    if (regex_Address.test(element.target.value)) {
+function addressTest(){
+    let err_msg_Address = document.getElementById('addressErrorMsg')
+    let regex_Address = new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç0-9]") //que des lettres, espaces, tirets et chiffres
+    if (regex_Address.test(input_Address.value)) {
 
         err_msg_Address.innerText = "Attention le champ ne peut pas contenir des caractères spéciaux"
-
+        return false;
+    }else if (input_Address.value < 1){
+        err_msg_Address.innerText = "Attention le champ ne peut pas etre vide"
+        return false;
     } else {
 
         err_msg_Address.innerText = ""
 
     }
+
+    return true
+}
+let input_Address = document.getElementById('address')
+input_Address.addEventListener("input", function (element) {
+    addressTest()
 })
 
 //City
@@ -262,36 +289,71 @@ input_Email.addEventListener("input", function (element) {
 
     }
 })
-/*----------End contrôle de formulaire----------*/
-
+/*----------End 6.Contrôle de formulaire----------*/
 
 let submitOrder = document.getElementById('order')
-submitOrder.addEventListener("click", function () {
+submitOrder.addEventListener("click", function (e) {    
+    e.preventDefault()
+
+    /**
+ *
+ * Expects request to contain:
+ * contact: {
+ *   firstName: string,
+ *   lastName: string,
+ *   address: string,
+ *   city: string,
+ *   email: string
+ * }
+ * products: [string] <-- array of product _id
+ *
+ */
 
     let contact = {
 
         firstName: input_firstName.value,
         lastName: input_lastName.value,
-        Address: input_Address.value,
-        City: input_City.value,
-        Email: input_Email.value
+        address: input_Address.value,
+        city: input_City.value,
+        email: input_Email.value
 
     }
 
-    console.log(contact)
-    console.log(contact)
+    //Creer un tableua vec tout les id du panier
+    let products = ['107fb5b75607497b96722bda5b504926' , '107fb5b75607497b96722bda5b504926']
+
+    let bodyObject = {
+        contact,
+        products
+    }
+
+    console.log(bodyObject)
+
+    //Vérification des champs
+    if(addressTest()){
+        fetch('http://localhost:3000/api/products/order', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyObject)
+
+        }).then(data =>{
+            return data.json();
+        }).then(reponse => {
+            console.log(reponse)
+            //Traitement de la réponse pour récuppere lorder id
+        });
+
+    }
+
+    
+
+
+
 });
 
 
 
-
-/*fetch('http://localhost:3000/api/products/order', {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(input_firstName.value)
-
-});*/
 

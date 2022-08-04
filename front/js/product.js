@@ -1,137 +1,128 @@
+/*-----------Start 2.création de la page produit----------*/
 
-/*Créé un objet pour récuprer la variable d'url*/
+/*L'objet URLSearchParams permet de récuprer la variable d'url pour pouvoir appeler l'API du produit*/
 const urlParams = new URLSearchParams(window.location.search)
 const varUrl = urlParams.get('id')
 console.log(varUrl)
 
+/*!!!!Rajouter condition if pour savoir si varUrl existe*/
 
+fetch("http://localhost:3000/api/products/" + varUrl)
+  .then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+  })
+  //Ajout des éléments du produit, appelé ici product, dans la page produit.
+  .then(function (product) {
+    console.log(product._id)
 
-/*Rajouter condition if pour savoir si varUrl existe ???*/
-fetch("http://localhost:3000/api/products/"+varUrl)
-.then(function(res) {
-  if (res.ok) {
-    return res.json();
-  }
-})
-.then(function(product) {
-  console.log(product._id)
-  //Afichage du produit//
+    //image
+    let itemImg = document.getElementsByClassName('item__img')[0];
+    let card_img = document.createElement('img')
+    card_img.src = product.imageUrl
+    card_img.alt = product.altTxt
+    itemImg.appendChild(card_img)
 
-  //image
-  let itemImg = document.getElementsByClassName('item__img')[0]; 
-  let card_img = document.createElement('img')
-  card_img.src = product.imageUrl
-  card_img.alt = product.altTxt 
-  itemImg.appendChild(card_img)
+    //Nom
+    let title = document.getElementById('title');
+    title.textContent = product.name;
 
-  //Nom
-  let title = document.getElementById('title');
-  title.textContent = product.name;
+    //Prix
+    let price = document.getElementById('price');
+    price.textContent = product.price;
 
-  //Prix
-  let price = document.getElementById('price');
-  price.textContent = product.price;
+    //Description
+    let description = document.getElementById('description');
+    description.textContent = product.description;
 
-  //Description
-  let description = document.getElementById('description');
-  description.textContent = product.description;
-  
-  //Option de couleurs
-  let select = document.getElementsByTagName('select')[0]
+    //Option de couleurs
+    let select = document.getElementsByTagName('select')[0]
     product.colors.forEach(color => {
-
       let option = document.createElement('option')
-      option.value= color
+      option.value = color
       option.textContent = color
       select.appendChild(option)
-  });
-
-  
-
-  //Ajout du produit dans le localstorage//
-  const submitCart = document.getElementById('addToCart')
-  submitCart.addEventListener('click' , function(){
+    });
+    /*-----------End 2.création de la page produit----------*/
 
 
-    //récupère la  valeur de l'input quantité 
-    quantity = document.querySelector('.item__content__settings__quantity input').value
-    quantity = parseInt(quantity)
-    console.log(quantity)
 
-    //récupère la  valeur de l'option couleur
-    console.log(select.value)
-    if (select.value === "") {
+    /*-----------Sart 3.Ajout du produit dans le localstorage----------*/
 
-      alert('Vous devez choisir une couleur')
+    //Création d'un evenement click sur le bouton "Ajouter au panier"
+    const submitCart = document.getElementById('addToCart')
+    submitCart.addEventListener('click', function () {
 
-    }
+      //L'objectif est d'abord de créer un objet produit pour ensuite l'intégrer dans le local-storage
+      //Le local-storage sera donc notre panier "virtuel" contenant un tableau d'objets
 
-    else {
+      //Ici on veut récupérer la valeur de l'input quantité pour l'intégrer dans l'objet produit  
+      quantity = document.querySelector('.item__content__settings__quantity input').value
+      quantity = parseInt(quantity)
+      console.log(quantity)
 
-    //Création du produit pour le panier
-    let produit = {
+      //On crée une alerte pour obliger l'acheteur à selectionner une option de couleur
+      if (select.value === "") {
+        alert('Vous devez choisir une couleur')
+      } else {
+        //Création de l'objet produit
+        let produit = {
+          id: product._id,
+          img: product.imageUrl,
+          altImg: product.altTxt,
+          name: product.name,
+          description: product.description,
+          color: select.value,
+          qt: quantity
+        }
 
-      id: product._id,
-      img: product.imageUrl,
-      altImg : product.altTxt,
-      name : product.altTxt,
-      description : product.description,
-      color : select.value,
-      qt : quantity
-
-    }
-
-    console.log(produit)
-
-
-    let cart = JSON.parse(localStorage.getItem('cart'))
-
-    if (localStorage.getItem('cart') == null ) {
-    
-      cart = []
-      cart.push(produit)
-      cart = JSON.stringify(cart)
-      localStorage.setItem('cart', cart)
-
-
-    } else {
-      // Si cart contient un objet dont l'id est égale à mon product id (id du produit actuellment sur la page) et une couleur differente
-      if (cart.some(item => item.id === product._id & item.color === select.value))/*   ??????*/ {
-
-        currentIndex = cart.findIndex( (produit) => produit.id === product._id)
-        console.log(currentIndex)
-
-        currentObject = (cart[cart.findIndex( (produit) => produit.id === product._id)])
-        console.log(currentObject)
-
-        currentQt = currentObject.qt
-        currentQt = parseInt(currentQt)
-
-        currentObject.qt = currentQt + quantity
-        console.log(currentObject)
- 
-        console.log(cart)
-        cart = JSON.stringify(cart)
-        localStorage.setItem('cart', cart)
+        //on crée la variable "cart" qui sera l'item cart du local-storage
+        let cart = JSON.parse(localStorage.getItem('cart'))
+        //Si aucun produit n'a déjà été ajouté au panier alors on créer le tableau et on y ajoute le produit
+        if (localStorage.getItem('cart') == null) {
+          cart = []
+          cart.push(produit)
+          cart = JSON.stringify(cart)//A chaque fois on transforme cart en JSON avant de l'intégrer dans le local-storage
+          localStorage.setItem('cart', cart)
 
         } else {
-          cart.push(produit)
-          cart = JSON.stringify(cart)
-          localStorage.setItem('cart', cart)
+          // Si le tableau "cart" contient un objet identique (même product id et même couleur) alors on modifie uniquement la quantité de l'objet existant
+          if (cart.some(item => item.id === product._id & item.color === select.value)) {
+            currentIndex = cart.findIndex((produit) => produit.id === product._id)
+            console.log(currentIndex)
+
+            currentObject = (cart[cart.findIndex((produit) => produit.id === product._id)])
+            console.log(currentObject)
+
+            currentQt = currentObject.qt
+            currentQt = parseInt(currentQt)
+
+            currentObject.qt = currentQt + quantity
+            console.log(currentObject)
+
+            console.log(cart)
+            cart = JSON.stringify(cart)
+            localStorage.setItem('cart', cart)
+          //Sinon on ajoute simplement "produit" dans le tableau "cart"
+          } else {
+            cart.push(produit)
+            cart = JSON.stringify(cart)
+            localStorage.setItem('cart', cart)
+          }
         }
-    }
-  }
+      }
+    });
+    /*-----------End 3.Ajout du produit dans le localstorage----------*/
+
+
+  })
+  .catch(function (err) {
+    console.log('erreur')
   });
-  
-})
-.catch(function(err) {
-  console.log('erreur')
-});
 
 
 
 
-//Récupere la panier //Si n'est pas vide, ajoutre le new produit //Si vide, créer un tableeau pui ajouter le produit
-//let panier = localStorage.getItem('panier') ? JSON.parse(localStorage.getItem('panier')) : []
 
 
