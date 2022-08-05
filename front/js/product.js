@@ -1,4 +1,6 @@
-/*-----------Start 2.création de la page produit----------*/
+/*------------------------------------------------------------*/
+/*------------ Start 2.création de la page produit -----------*/
+/*------------------------------------------------------------*/
 
 /*L'objet URLSearchParams permet de récuprer la variable d'url pour pouvoir appeler l'API du produit*/
 const urlParams = new URLSearchParams(window.location.search)
@@ -44,11 +46,14 @@ fetch("http://localhost:3000/api/products/" + varUrl)
       option.textContent = color
       select.appendChild(option)
     });
-    /*-----------End 2.création de la page produit----------*/
+      /*------------------------------------------------------------*/
+      /*------------- End 2.création de la page produit ------------*/
+      /*------------------------------------------------------------*/
 
 
-
-    /*-----------Sart 3.Ajout du produit dans le localstorage----------*/
+      /*------------------------------------------------------------*/
+      /*------- Sart 3.Ajout du produit dans le localstorage -------*/
+      /*------------------------------------------------------------*/
 
     //Création d'un evenement click sur le bouton "Ajouter au panier"
     const submitCart = document.getElementById('addToCart')
@@ -89,16 +94,14 @@ fetch("http://localhost:3000/api/products/" + varUrl)
         } else {
           // Si le tableau "cart" contient un objet identique (même product id et même couleur) alors on modifie uniquement la quantité de l'objet existant
           if (cart.some(item => item.id === product._id & item.color === select.value)) {
+            
             currentIndex = cart.findIndex((produit) => produit.id === product._id)
-            console.log(currentIndex)
-
-            currentObject = (cart[cart.findIndex((produit) => produit.id === product._id)])
-            console.log(currentObject)
+            currentObject = (cart[currentIndex])
 
             currentQt = currentObject.qt
             currentQt = parseInt(currentQt)
 
-            currentObject.qt = currentQt + quantity
+            currentObject.qt = currentQt + parseInt(quantity)
             console.log(currentObject)
 
             console.log(cart)
@@ -113,9 +116,9 @@ fetch("http://localhost:3000/api/products/" + varUrl)
         }
       }
     });
-    /*-----------End 3.Ajout du produit dans le localstorage----------*/
-
-
+    /*------------------------------------------------------------*/
+    /*------- End 3.Ajout du produit dans le localstorage -------*/
+    /*------------------------------------------------------------*/
   })
   .catch(function (err) {
     console.log('erreur')
