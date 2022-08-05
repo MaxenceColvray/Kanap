@@ -5,19 +5,17 @@
 /*L'objet URLSearchParams permet de récuprer la variable d'url pour pouvoir appeler l'API du produit*/
 const urlParams = new URLSearchParams(window.location.search)
 const varUrl = urlParams.get('id')
-console.log(varUrl)
-
-/*!!!!Rajouter condition if pour savoir si varUrl existe*/
 
 fetch("http://localhost:3000/api/products/" + varUrl)
   .then(function (res) {
     if (res.ok) {
       return res.json();
+    } else {
+      console.log("Vérifier l'url http://localhost:3000/api/products/" + varUrl)
     }
   })
   //Ajout des éléments du produit, appelé ici product, dans la page produit.
   .then(function (product) {
-    console.log(product._id)
 
     //image
     let itemImg = document.getElementsByClassName('item__img')[0];
@@ -46,14 +44,14 @@ fetch("http://localhost:3000/api/products/" + varUrl)
       option.textContent = color
       select.appendChild(option)
     });
-      /*------------------------------------------------------------*/
-      /*------------- End 2.création de la page produit ------------*/
-      /*------------------------------------------------------------*/
+    /*------------------------------------------------------------*/
+    /*------------- End 2.création de la page produit ------------*/
+    /*------------------------------------------------------------*/
 
 
-      /*------------------------------------------------------------*/
-      /*------- Sart 3.Ajout du produit dans le localstorage -------*/
-      /*------------------------------------------------------------*/
+    /*------------------------------------------------------------*/
+    /*------- Sart 3.Ajout du produit dans le localstorage -------*/
+    /*------------------------------------------------------------*/
 
     //Création d'un evenement click sur le bouton "Ajouter au panier"
     const submitCart = document.getElementById('addToCart')
@@ -94,7 +92,7 @@ fetch("http://localhost:3000/api/products/" + varUrl)
         } else {
           // Si le tableau "cart" contient un objet identique (même product id et même couleur) alors on modifie uniquement la quantité de l'objet existant
           if (cart.some(item => item.id === product._id & item.color === select.value)) {
-            
+
             currentIndex = cart.findIndex((produit) => produit.id === product._id)
             currentObject = (cart[currentIndex])
 
@@ -107,7 +105,7 @@ fetch("http://localhost:3000/api/products/" + varUrl)
             console.log(cart)
             cart = JSON.stringify(cart)
             localStorage.setItem('cart', cart)
-          //Sinon on ajoute simplement "produit" dans le tableau "cart"
+            //Sinon on ajoute simplement "produit" dans le tableau "cart"
           } else {
             cart.push(produit)
             cart = JSON.stringify(cart)
@@ -115,6 +113,7 @@ fetch("http://localhost:3000/api/products/" + varUrl)
           }
         }
       }
+      alert('Le produit a été ajouté au panier')
     });
     /*------------------------------------------------------------*/
     /*------- End 3.Ajout du produit dans le localstorage -------*/
