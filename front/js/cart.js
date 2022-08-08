@@ -34,7 +34,7 @@ fetch("http://localhost:3000/api/products")
         /*------------------------------------------------------------*/
         /*------------ End 4.Création d'un tableau de prix -----------*/
         /*------------------------------------------------------------*/
-       
+
 
         /*------------------------------------------------------------*/
         /*---------------- Start 5.Affichage du panier ---------------*/
@@ -202,7 +202,7 @@ function validate_field(input_id, error_id, regex) {
 }
 
 function validate_form() {
-    if (!validate_field('firstName', 'firstNameErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))) {
+    if (!validate_field('firstName', 'firstNameErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))) { //Si validate_field() est different de true
         return false;
     }
     if (!validate_field('lastName', 'lastNameErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))) {
@@ -217,6 +217,7 @@ function validate_form() {
     if (!validate_field('email', 'emailErrorMsg', new RegExp("[^a-z0-9-@.]"))) {
         return false;
     }
+    return true;
 }
 /*------------------------------------------------------------*/
 /*---------------- End 6.Contrôle de formulaire --------------*/
@@ -231,40 +232,48 @@ let submitOrder = document.getElementById('order')
 submitOrder.addEventListener("click", function (e) {
     e.preventDefault() //Annule le reload et les fonctions de contrôles par défauts
     validate_form()
+    console.log(validate_form())
 
-    let contact = {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        email: document.getElementById('email').value
+    if (validate_form()) {
+
+        let contact = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            email: document.getElementById('email').value
+        }
+
+        let cart = JSON.parse(localStorage.getItem('cart'))
+        let products = []
+        cart.forEach(product => {
+            products.push(product.id)
+        })
+
+        let customerObject = {
+            contact,
+            products
+        }
+
+        fetch('http://localhost:3000/api/products/order', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(customerObject)
+
+        }).then(data => {
+            console.log(data) //fetch renvoie un objet réponse
+            return data.json();
+        }).then(reponse => {
+            console.log(reponse)
+            console.log(reponse.orderId)
+            window.location.href = `./confirmation.html?orderId=${reponse.orderId}`//renvoie sur la page confirmation avec ds l'Url la variable d'Url reponse.orderId
+        });
+    } else {
+        console.log(`la fonction validate_form() est ${validate_form()}`)
     }
- 
-    let cart = JSON.parse(localStorage.getItem('cart'))
-    let products = []
-    cart.forEach(product =>{
-        products.push(product.id)
-    })
-
-    let customerObject = {
-        contact,
-        products
-    }
-
-    fetch('http://localhost:3000/api/products/order', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(customerObject)
-
-    }).then(data => {      
-        console.log(data) //fetch renvoie un objet réponse
-        return data.json();
-    }).then(reponse => {
-        console.log(reponse)
-    });
 })
 /*----------------------------------------------------------*/
 /*---------- End 7.Envoi de l'objet customerObject ---------*/
@@ -273,15 +282,15 @@ submitOrder.addEventListener("click", function (e) {
 
 
 
+/*
+------- Question --------
+- Comment voir mes objets apès le post ?
+- Exemple fonction setCart, pk je peux pas la mettre en haut ?
+- Concept code asynchrone pourquoi je peux pas lire cart dans 7. pareil pour validate_form
+- Data et réponse ?
 
-    /*
-    ------- Question --------
-    - Comment voir mes objets apès le post ?
-    - Exemple fonction setCart, pk je peux pas la mettre en haut ?
-    - Concept code asynchrone pourquoi je peux pas lire cart dans 7. pareil pour validate_form
-    - Data et réponse ?
-    
-    */
+ 
+*/
 
 
 

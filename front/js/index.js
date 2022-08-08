@@ -16,7 +16,7 @@ fetch("http://localhost:3000/api/products")
     products.forEach(product => {
 
       let card = document.createElement('a')
-      card.href = "./product.html?id=t" + product._id; //Défini l'url de la page produit (avec la variable d'url )
+      card.href = "./product.html?id=" + product._id; //Défini l'url de la page produit (avec la variable d'url )
       boxproducts.appendChild(card)
 
       let card_article = document.createElement('article')
