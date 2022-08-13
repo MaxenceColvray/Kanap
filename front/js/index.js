@@ -1,4 +1,6 @@
+/*---------------------------------------------------------------------*/
 /*-----------Start 1.création des produit dans page d'accueil----------*/
+/*---------------------------------------------------------------------*/
 
 //Appel à l'API
 fetch("http://localhost:3000/api/products")
@@ -10,13 +12,12 @@ fetch("http://localhost:3000/api/products")
   .then(function (products) { //products correspond au tableau de tous les objets 
 
     let boxproducts = document.getElementById('items');
-    console.log(boxproducts)
 
     //Pour chaque objets, ici appelés product, on crée une card dans boxproducts =>
     products.forEach(product => {
 
       let card = document.createElement('a')
-      card.href = "./product.html?id=" + product._id; //Défini l'url de la page produit (avec la variable d'url )
+      card.href = "./product.html?id=" + product._id; //Défini l'url de la page produit avec la variable d'url
       boxproducts.appendChild(card)
 
       let card_article = document.createElement('article')
@@ -40,7 +41,10 @@ fetch("http://localhost:3000/api/products")
   .catch(function (err) {
     console.log('erreur')
   });
+
+/*-------------------------------------------------------------------*/
 /*-----------End 1.création des produit dans page d'accueil----------*/
+/*-------------------------------------------------------------------*/
 
 
 

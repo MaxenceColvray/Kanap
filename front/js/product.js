@@ -63,7 +63,6 @@ fetch("http://localhost:3000/api/products/" + varUrl)
       //Ici on veut récupérer la valeur de l'input quantité pour l'intégrer dans l'objet produit  
       quantity = document.querySelector('.item__content__settings__quantity input').value
       quantity = parseInt(quantity)
-      console.log(quantity)
 
       //On crée une alerte pour obliger l'acheteur à selectionner une option de couleur
       if (select.value === "") {
@@ -82,7 +81,7 @@ fetch("http://localhost:3000/api/products/" + varUrl)
 
         //on crée la variable "cart" qui sera l'item cart du local-storage
         let cart = JSON.parse(localStorage.getItem('cart'))
-        //Si aucun produit n'a déjà été ajouté au panier alors on créer le tableau et on y ajoute le produit
+        //Si aucun produit n'a déjà été ajouté au panier alors on créer le tableau et on ajoute le produit
         if (localStorage.getItem('cart') == null) {
           cart = []
           cart.push(produit)
@@ -112,11 +111,11 @@ fetch("http://localhost:3000/api/products/" + varUrl)
             localStorage.setItem('cart', cart)
           }
         }
+        alert('Le produit a été ajouté au panier')
       }
-      alert('Le produit a été ajouté au panier')
     });
     /*------------------------------------------------------------*/
-    /*------- End 3.Ajout du produit dans le localstorage -------*/
+    /*------- End 3.Ajout du produit dans le localstorage --------*/
     /*------------------------------------------------------------*/
   })
   .catch(function (err) {

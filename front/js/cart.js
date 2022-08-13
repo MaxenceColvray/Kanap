@@ -5,12 +5,6 @@
 //on enregistre pas le prix dans l'objet "produit" sur le local-storage pour des raisons de sécurité
 
 let priceTable = []
-//Pour exemeple question ??????? let cart = 0
-/*Pour exemeple question ??????? let setCart = () => {
-    cart = JSON.stringify(cart)
-    localStorage.setItem('cart', cart)
-    cart = JSON.parse(cart)
-}*/
 fetch("http://localhost:3000/api/products")
     .then(function (res) {
         if (res.ok) {
@@ -199,25 +193,19 @@ function validate_field(input_id, error_id, regex) {
         el_error.innerText = ""
         return true
     }
+    return false
 }
 
 function validate_form() {
-    if (!validate_field('firstName', 'firstNameErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))) { //Si validate_field() est different de true
+    if (!validate_field('firstName', 'firstNameErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))//Si validate_field() est different de true
+        || !validate_field('lastName', 'lastNameErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))
+        || !validate_field('address', 'addressErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç,;°'0-9]"))
+        || !validate_field('city', 'cityErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))
+        || !validate_field('email', 'emailErrorMsg', new RegExp("[^a-z0-9-@.]"))) {
         return false;
+    } else {
+        return true;
     }
-    if (!validate_field('lastName', 'lastNameErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))) {
-        return false;
-    }
-    if (!validate_field('address', 'addressErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç,;°'0-9]"))) {
-        return false;
-    }
-    if (!validate_field('city', 'cityErrorMsg', new RegExp("[^a-zA-Z- àâäéèêëïîôöùûüÿç]"))) {
-        return false;
-    }
-    if (!validate_field('email', 'emailErrorMsg', new RegExp("[^a-z0-9-@.]"))) {
-        return false;
-    }
-    return true;
 }
 /*------------------------------------------------------------*/
 /*---------------- End 6.Contrôle de formulaire --------------*/
@@ -279,18 +267,6 @@ submitOrder.addEventListener("click", function (e) {
 /*---------- End 7.Envoi de l'objet customerObject ---------*/
 /*----------------------------------------------------------*/
 
-
-
-
-/*
-------- Question --------
-- Comment voir mes objets apès le post ?
-- Exemple fonction setCart, pk je peux pas la mettre en haut ?
-- Concept code asynchrone pourquoi je peux pas lire cart dans 7. pareil pour validate_form
-- Data et réponse ?
-
- 
-*/
 
 
 
